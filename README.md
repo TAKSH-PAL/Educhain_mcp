@@ -71,12 +71,14 @@ Add the following to your Claude Desktop configuration file:
 ```json
 {
   "mcpServers": {
-    "educhain-mcp": {
-      "command": "python",
-      "args": ["path/to/your/educhain-mcp/mcp_server.py"],
-      "env": {
-        "OPENAI_API_KEY": "your_openai_api_key_here"
-      }
+    "weather": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/ABSOLUTE/PATH/TO/PARENT/FOLDER/weather",
+        "run",
+        "weather.py"
+      ]
     }
   }
 }
@@ -176,10 +178,6 @@ The server implements robust error handling:
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
