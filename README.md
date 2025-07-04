@@ -71,13 +71,13 @@ Add the following to your Claude Desktop configuration file:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "Educhain_mcp": {
       "command": "uv",
       "args": [
         "--directory",
-        "/ABSOLUTE/PATH/TO/PARENT/FOLDER/weather",
+        "/ABSOLUTE/PATH/TO/PARENT/FOLDER/Educhain_mcp",
         "run",
-        "weather.py"
+        "mcp_server.py"
       ]
     }
   }
