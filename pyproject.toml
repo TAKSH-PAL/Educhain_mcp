@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "educhain-mcp"
+version = "0.1.0"
+description = "A Model Context Protocol (MCP) server that integrates EduChain's educational content generation capabilities with Claude Desktop and other MCP-compatible clients."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Taksh Pal", email = "takshpalxc@gmail.com"},
+]
+maintainers = [
+    {name = "Taksh Pal", email = "takshpalxc@gmail.com"},
+]
+keywords = [
+    "educhain",
+    "mcp",
+    "model-context-protocol",
+    "claude-desktop",
+    "education",
+    "ai",
+    "flashcards",
+    "mcq",
+    "lesson-plans",
+    "teaching",
+    "learning"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+]
+dependencies = [
+    "educhain>=0.3.10",
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.10.1",
+    "python-dotenv>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/educhain-mcp"
+Repository = "https://github.com/yourusername/educhain-mcp"
+Documentation = "https://github.com/yourusername/educhain-mcp#readme"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+
+[project.scripts]
+educhain-mcp = "mcp_server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]

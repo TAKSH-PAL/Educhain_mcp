@@ -1,0 +1,30 @@
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Environment variables
+.env
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# MCP and CLI artifacts (if any)
+.mcp/
+.mcp_inspector/
+
+# Misc
+*.log
+*.zip

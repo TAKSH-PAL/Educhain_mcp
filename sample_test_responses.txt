@@ -1,0 +1,875 @@
+EduChain MCP Server - Sample Test Commands and Responses
+=======================================================
+
+This file contains sample test commands for the EduChain MCP server and their expected responses.
+Use these examples for testing, debugging, and understanding the server's functionality.
+
+Last Updated: 2025-07-04
+Server Version: 0.1.0
+
+=======================================================
+TABLE OF CONTENTS
+=======================================================
+
+1. MCP Protocol Handshake
+2. Tool Discovery
+3. Generate MCQs Tool Tests
+4. Lesson Plan Tool Tests
+5. Generate Flashcards Tool Tests
+6. Error Handling Tests
+7. Edge Cases and Validation Tests
+
+=======================================================
+1. MCP PROTOCOL HANDSHAKE
+=======================================================
+
+Initialize Request:
+-------------------
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {}
+    },
+    "clientInfo": {
+      "name": "claude-desktop",
+      "version": "0.7.3"
+    }
+  }
+}
+
+Expected Response:
+------------------
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "serverInfo": {
+      "name": "EduChain MCP",
+      "version": "0.1.0"
+    }
+  }
+}
+
+=======================================================
+2. TOOL DISCOVERY
+=======================================================
+
+List Tools Request:
+-------------------
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list"
+}
+
+Expected Response:
+------------------
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "tools": [
+      {
+        "name": "generate_mcqs",
+        "description": "Generate multiple-choice questions (MCQs) for a given educational topic.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "topic": {
+              "type": "string",
+              "description": "The educational topic or subject area for which to generate questions."
+            },
+            "num_questions": {
+              "type": "integer",
+              "default": 5,
+              "description": "The number of questions to generate. Must be between 1 and 20."
+            }
+          },
+          "required": ["topic"]
+        }
+      },
+      {
+        "name": "lesson_plan",
+        "description": "Generate a comprehensive, structured lesson plan for a given educational topic.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "topic": {
+              "type": "string",
+              "description": "The subject, concept, or learning objective for the lesson."
+            },
+            "duration": {
+              "type": "string",
+              "description": "The intended duration of the lesson (optional)."
+            },
+            "grade_level": {
+              "type": "string",
+              "description": "The target grade level or educational level (optional)."
+            }
+          },
+          "required": ["topic"]
+        }
+      },
+      {
+        "name": "generate_flashcards",
+        "description": "Generate educational flashcards for effective study and memorization.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "topic": {
+              "type": "string",
+              "description": "The subject area, concept, or learning domain for which to create flashcards."
+            },
+            "num_cards": {
+              "type": "integer",
+              "default": 10,
+              "description": "The number of flashcards to generate. Must be between 1 and 50."
+            },
+            "difficulty": {
+              "type": "string",
+              "description": "The difficulty level for the flashcards (beginner, intermediate, advanced)."
+            }
+          },
+          "required": ["topic"]
+        }
+      }
+    ]
+  }
+}
+
+=======================================================
+3. GENERATE MCQs TOOL TESTS
+=======================================================
+
+Test 3.1: Basic MCQ Generation (Default Parameters)
+---------------------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_mcqs",
+    "arguments": {
+      "topic": "Photosynthesis"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{
+          \"questions\": [
+            {
+              \"question\": \"What is the primary purpose of photosynthesis?\",
+              \"options\": [
+                \"A) To produce oxygen for animals\",
+                \"B) To convert light energy into chemical energy\",
+                \"C) To break down glucose molecules\",
+                \"D) To release carbon dioxide into the atmosphere\"
+              ],
+              \"correct_answer\": \"B\",
+              \"explanation\": \"Photosynthesis converts light energy into chemical energy stored in glucose.\"
+            },
+            {
+              \"question\": \"Which organelle is primarily responsible for photosynthesis?\",
+              \"options\": [
+                \"A) Mitochondria\",
+                \"B) Nucleus\",
+                \"C) Chloroplast\",
+                \"D) Ribosome\"
+              ],
+              \"correct_answer\": \"C\",
+              \"explanation\": \"Chloroplasts contain chlorophyll and are the sites of photosynthesis.\"
+            },
+            {
+              \"question\": \"What are the main reactants in photosynthesis?\",
+              \"options\": [
+                \"A) Glucose and oxygen\",
+                \"B) Carbon dioxide and water\",
+                \"C) Oxygen and water\",
+                \"D) Glucose and carbon dioxide\"
+              ],
+              \"correct_answer\": \"B\",
+              \"explanation\": \"Photosynthesis uses carbon dioxide and water as reactants.\"
+            },
+            {
+              \"question\": \"Which pigment is most important for capturing light energy?\",
+              \"options\": [
+                \"A) Carotenoids\",
+                \"B) Xanthophylls\",
+                \"C) Chlorophyll a\",
+                \"D) Anthocyanins\"
+              ],
+              \"correct_answer\": \"C\",
+              \"explanation\": \"Chlorophyll a is the primary pigment for light absorption.\"
+            },
+            {
+              \"question\": \"What is the chemical equation for photosynthesis?\",
+              \"options\": [
+                \"A) 6CO2 + 6H2O → C6H12O6 + 6O2\",
+                \"B) C6H12O6 + 6O2 → 6CO2 + 6H2O\",
+                \"C) 6O2 + 6H2O → C6H12O6 + 6CO2\",
+                \"D) C6H12O6 + 6CO2 → 6O2 + 6H2O\"
+              ],
+              \"correct_answer\": \"A\",
+              \"explanation\": \"This equation shows the conversion of CO2 and H2O to glucose and oxygen.\"
+            }
+          ],
+          \"topic\": \"Photosynthesis\",
+          \"count\": 5
+        }"
+      }
+    ]
+  }
+}
+
+Test 3.2: MCQ Generation with Custom Number of Questions
+-------------------------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_mcqs",
+    "arguments": {
+      "topic": "World War II",
+      "num_questions": 3
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{
+          \"questions\": [
+            {
+              \"question\": \"In which year did World War II begin?\",
+              \"options\": [
+                \"A) 1938\",
+                \"B) 1939\",
+                \"C) 1940\",
+                \"D) 1941\"
+              ],
+              \"correct_answer\": \"B\",
+              \"explanation\": \"World War II began on September 1, 1939, when Germany invaded Poland.\"
+            },
+            {
+              \"question\": \"Which event led to the United States entering World War II?\",
+              \"options\": [
+                \"A) Invasion of Poland\",
+                \"B) Battle of Britain\",
+                \"C) Attack on Pearl Harbor\",
+                \"D) D-Day landings\"
+              ],
+              \"correct_answer\": \"C\",
+              \"explanation\": \"The attack on Pearl Harbor on December 7, 1941, prompted the US to enter the war.\"
+            },
+            {
+              \"question\": \"What was the code name for the Allied invasion of Normandy?\",
+              \"options\": [
+                \"A) Operation Barbarossa\",
+                \"B) Operation Overlord\",
+                \"C) Operation Market Garden\",
+                \"D) Operation Torch\"
+              ],
+              \"correct_answer\": \"B\",
+              \"explanation\": \"Operation Overlord was the code name for the D-Day landings in Normandy.\"
+            }
+          ],
+          \"topic\": \"World War II\",
+          \"count\": 3
+        }"
+      }
+    ]
+  }
+}
+
+=======================================================
+4. LESSON PLAN TOOL TESTS
+=======================================================
+
+Test 4.1: Basic Lesson Plan Generation
+--------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "lesson_plan",
+    "arguments": {
+      "topic": "Introduction to Fractions"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{
+          \"title\": \"Introduction to Fractions\",
+          \"objectives\": [
+            \"Students will understand what fractions represent\",
+            \"Students will be able to identify numerator and denominator\",
+            \"Students will recognize fractions in everyday situations\",
+            \"Students will compare simple fractions\"
+          ],
+          \"materials\": [
+            \"Fraction circles or bars\",
+            \"Whiteboard and markers\",
+            \"Worksheet with fraction exercises\",
+            \"Real-world objects for demonstration (pizza, chocolate bar)\",
+            \"Interactive fraction games\"
+          ],
+          \"activities\": [
+            {
+              \"name\": \"Warm-up Discussion\",
+              \"duration\": \"10 minutes\",
+              \"description\": \"Ask students about sharing food equally among friends\"
+            },
+            {
+              \"name\": \"Fraction Introduction\",
+              \"duration\": \"15 minutes\",
+              \"description\": \"Introduce fractions using visual aids and real objects\"
+            },
+            {
+              \"name\": \"Hands-on Practice\",
+              \"duration\": \"20 minutes\",
+              \"description\": \"Students work with fraction manipulatives\"
+            },
+            {
+              \"name\": \"Group Activity\",
+              \"duration\": \"10 minutes\",
+              \"description\": \"Students find fractions in classroom objects\"
+            },
+            {
+              \"name\": \"Wrap-up and Review\",
+              \"duration\": \"5 minutes\",
+              \"description\": \"Review key concepts and answer questions\"
+            }
+          ],
+          \"assessment\": \"Exit ticket with 3 fraction identification problems\",
+          \"homework\": \"Complete worksheet identifying fractions in daily life\",
+          \"notes\": \"Ensure all students have access to manipulatives\"
+        }"
+      }
+    ]
+  }
+}
+
+Test 4.2: Lesson Plan with Duration and Grade Level
+--------------------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "method": "tools/call",
+  "params": {
+    "name": "lesson_plan",
+    "arguments": {
+      "topic": "The Water Cycle",
+      "duration": "45 minutes",
+      "grade_level": "Grade 4"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{
+          \"title\": \"The Water Cycle\",
+          \"duration\": \"45 minutes\",
+          \"grade_level\": \"Grade 4\",
+          \"objectives\": [
+            \"Students will identify the four main stages of the water cycle\",
+            \"Students will explain how water moves through the environment\",
+            \"Students will connect the water cycle to weather patterns\",
+            \"Students will use scientific vocabulary related to the water cycle\"
+          ],
+          \"vocabulary\": [
+            \"Evaporation\",
+            \"Condensation\",
+            \"Precipitation\",
+            \"Collection\"
+          ],
+          \"materials\": [
+            \"Water cycle diagram\",
+            \"Clear containers and water\",
+            \"Heat source (lamp)\",
+            \"Ice cubes\",
+            \"Plastic wrap\",
+            \"Water cycle worksheet\"
+          ],
+          \"activities\": [
+            {
+              \"name\": \"Hook Activity\",
+              \"duration\": \"5 minutes\",
+              \"description\": \"Show students a glass of water and ask where it came from\"
+            },
+            {
+              \"name\": \"Direct Instruction\",
+              \"duration\": \"15 minutes\",
+              \"description\": \"Introduce water cycle stages using diagram and vocabulary\"
+            },
+            {
+              \"name\": \"Demonstration\",
+              \"duration\": \"15 minutes\",
+              \"description\": \"Model mini water cycle using containers, heat, and ice\"
+            },
+            {
+              \"name\": \"Guided Practice\",
+              \"duration\": \"8 minutes\",
+              \"description\": \"Students label water cycle diagram with partners\"
+            },
+            {
+              \"name\": \"Closure\",
+              \"duration\": \"2 minutes\",
+              \"description\": \"Quick review of the four stages\"
+            }
+          ],
+          \"assessment\": \"Students correctly label water cycle diagram and explain one stage\",
+          \"differentiation\": \"Visual learners get diagram, kinesthetic learners act out stages\",
+          \"extension\": \"Research local weather patterns and water cycle connections\"
+        }"
+      }
+    ]
+  }
+}
+
+=======================================================
+5. GENERATE FLASHCARDS TOOL TESTS
+=======================================================
+
+Test 5.1: Basic Flashcard Generation
+------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 7,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_flashcards",
+    "arguments": {
+      "topic": "Spanish Vocabulary - Colors"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 7,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{
+          \"flashcards\": [
+            {
+              \"front\": \"Red\",
+              \"back\": \"Rojo (masculine) / Roja (feminine)\"
+            },
+            {
+              \"front\": \"Blue\",
+              \"back\": \"Azul\"
+            },
+            {
+              \"front\": \"Green\",
+              \"back\": \"Verde\"
+            },
+            {
+              \"front\": \"Yellow\",
+              \"back\": \"Amarillo (masculine) / Amarilla (feminine)\"
+            },
+            {
+              \"front\": \"Black\",
+              \"back\": \"Negro (masculine) / Negra (feminine)\"
+            },
+            {
+              \"front\": \"White\",
+              \"back\": \"Blanco (masculine) / Blanca (feminine)\"
+            },
+            {
+              \"front\": \"Orange\",
+              \"back\": \"Naranja\"
+            },
+            {
+              \"front\": \"Purple\",
+              \"back\": \"Morado (masculine) / Morada (feminine) or Púrpura\"
+            },
+            {
+              \"front\": \"Pink\",
+              \"back\": \"Rosa or Rosado (masculine) / Rosada (feminine)\"
+            },
+            {
+              \"front\": \"Brown\",
+              \"back\": \"Marrón or Café\"
+            }
+          ],
+          \"topic\": \"Spanish Vocabulary - Colors\",
+          \"count\": 10
+        }"
+      }
+    ]
+  }
+}
+
+Test 5.2: Flashcards with Custom Number and Difficulty
+-----------------------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 8,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_flashcards",
+    "arguments": {
+      "topic": "Chemistry - Periodic Table",
+      "num_cards": 5,
+      "difficulty": "intermediate"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 8,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{
+          \"flashcards\": [
+            {
+              \"front\": \"What is the atomic number of Carbon?\",
+              \"back\": \"6 (Carbon has 6 protons in its nucleus)\"
+            },
+            {
+              \"front\": \"Which element has the symbol 'Au'?\",
+              \"back\": \"Gold (from the Latin 'aurum')\"
+            },
+            {
+              \"front\": \"What is the most abundant element in Earth's atmosphere?\",
+              \"back\": \"Nitrogen (N₂, about 78% of the atmosphere)\"
+            },
+            {
+              \"front\": \"Which group of elements are known as noble gases?\",
+              \"back\": \"Group 18 (Helium, Neon, Argon, Krypton, Xenon, Radon)\"
+            },
+            {
+              \"front\": \"What is the electron configuration of Sodium (Na)?\",
+              \"back\": \"1s² 2s² 2p⁶ 3s¹ or [Ne] 3s¹\"
+            }
+          ],
+          \"topic\": \"Chemistry - Periodic Table\",
+          \"count\": 5,
+          \"difficulty\": \"intermediate\"
+        }"
+      }
+    ]
+  }
+}
+
+=======================================================
+6. ERROR HANDLING TESTS
+=======================================================
+
+Test 6.1: Invalid Tool Name
+---------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 9,
+  "method": "tools/call",
+  "params": {
+    "name": "invalid_tool",
+    "arguments": {
+      "topic": "Test"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 9,
+  "error": {
+    "code": -32601,
+    "message": "Method not found",
+    "data": "Unknown tool: invalid_tool"
+  }
+}
+
+Test 6.2: Missing Required Parameter
+-----------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_mcqs",
+    "arguments": {
+      "num_questions": 5
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\": \"Topic must be a non-empty string\"}"
+      }
+    ]
+  }
+}
+
+Test 6.3: Invalid Parameter Value
+--------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 11,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_mcqs",
+    "arguments": {
+      "topic": "Math",
+      "num_questions": 25
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 11,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\": \"Number of questions must be an integer between 1 and 20\"}"
+      }
+    ]
+  }
+}
+
+Test 6.4: Empty Topic String
+---------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 12,
+  "method": "tools/call",
+  "params": {
+    "name": "lesson_plan",
+    "arguments": {
+      "topic": ""
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 12,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\": \"Topic must be a non-empty string\"}"
+      }
+    ]
+  }
+}
+
+Test 6.5: Invalid Difficulty Level
+---------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 13,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_flashcards",
+    "arguments": {
+      "topic": "History",
+      "difficulty": "expert"
+    }
+  }
+}
+
+Expected Response:
+{
+  "jsonrpc": "2.0",
+  "id": 13,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\": \"Difficulty must be 'beginner', 'intermediate', or 'advanced'\"}"
+      }
+    ]
+  }
+}
+
+=======================================================
+7. EDGE CASES AND VALIDATION TESTS
+=======================================================
+
+Test 7.1: Minimum Valid Parameters
+---------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 14,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_mcqs",
+    "arguments": {
+      "topic": "Math",
+      "num_questions": 1
+    }
+  }
+}
+
+Expected Response: Single question with proper structure
+
+Test 7.2: Maximum Valid Parameters
+---------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 15,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_flashcards",
+    "arguments": {
+      "topic": "Science",
+      "num_cards": 50
+    }
+  }
+}
+
+Expected Response: 50 flashcards with proper structure
+
+Test 7.3: Very Long Topic Name
+-----------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 16,
+  "method": "tools/call",
+  "params": {
+    "name": "lesson_plan",
+    "arguments": {
+      "topic": "Advanced Quantum Mechanics and Its Applications in Modern Technology Including Quantum Computing and Quantum Cryptography"
+    }
+  }
+}
+
+Expected Response: Properly formatted lesson plan handling long topic
+
+Test 7.4: Special Characters in Topic
+------------------------------------
+
+Request:
+{
+  "jsonrpc": "2.0",
+  "id": 17,
+  "method": "tools/call",
+  "params": {
+    "name": "generate_mcqs",
+    "arguments": {
+      "topic": "C++ Programming & Data Structures"
+    }
+  }
+}
+
+Expected Response: Questions properly handling special characters
+
+=======================================================
+TESTING NOTES
+=======================================================
+
+1. All responses should be valid JSON
+2. Error responses maintain consistent structure
+3. Successful responses include proper content wrapping
+4. Tool parameters are validated before processing
+5. Logging occurs for all requests (check server logs)
+6. Response times should be reasonable (< 30 seconds typically)
+
+=======================================================
+TROUBLESHOOTING
+=======================================================
+
+Common Issues:
+- If getting "module not found" errors, check EduChain installation
+- If getting API errors, verify OPENAI_API_KEY is set
+- If server doesn't respond, check if it's running in stdio mode
+- If responses are truncated, check network/timeout settings
+
+For debugging, use:
+npx @modelcontextprotocol/inspector python mcp_server.py
+
+=======================================================
+END OF TEST FILE
+=======================================================
